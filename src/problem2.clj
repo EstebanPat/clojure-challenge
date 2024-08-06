@@ -3,7 +3,8 @@
             [clojure.java.io :as io]
             [clojure.spec.alpha :as s]
             [clojure.instant :as inst]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [invoice-spec :as spec]))
 
 (defn parse-date [date-str]
   (inst/read-instant-date (str/replace date-str #"(\d{2})/(\d{2})/(\d{4})" "$3-$2-$1T00:00:00.000Z")))
@@ -31,4 +32,7 @@
                          (json/read-str :key-fn keyword))]
     (transform-invoice (:invoice invoice-data))))
 
-(println (load-invoice "../invoice.json"))
+(def invoice2 (load-invoice "../invoice.json"))
+
+;; Validamos la factura
+(println (s/valid? ::spec/invoice invoice2))  ;; Esto debería imprimir `true` si es válida
